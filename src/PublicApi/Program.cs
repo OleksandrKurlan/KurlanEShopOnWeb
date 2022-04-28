@@ -33,6 +33,7 @@ builder.Services.AddEndpoints();
 //Use to force loading of appsettings.json of test project
 builder.Configuration.AddConfigurationFile("appsettings.test.json");
 builder.Logging.AddConsole();
+builder.Services.AddApplicationInsightsTelemetry();
 
 Microsoft.eShopWeb.Infrastructure.Dependencies.ConfigureServices(builder.Configuration, builder.Services);
 
@@ -90,23 +91,26 @@ builder.Services.AddMediatR(typeof(CatalogItem).Assembly);
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+
+if (builder.Environment.IsDevelopment())
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-    c.EnableAnnotations();
-    c.SchemaFilter<CustomSchemaFilters>();
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    builder.Services.AddSwaggerGen(c =>
     {
-        Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+        c.EnableAnnotations();
+        c.SchemaFilter<CustomSchemaFilters>();
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
                       Enter 'Bearer' [space] and then your token in the text input below.
                       \r\n\r\nExample: 'Bearer 12345abcdef'",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer"
+        });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement()
             {
                     {
                         new OpenApiSecurityScheme
@@ -124,7 +128,8 @@ builder.Services.AddSwaggerGen(c =>
                         new List<string>()
                     }
             });
-});
+    });
+}
 
 var app = builder.Build();
 
@@ -166,15 +171,20 @@ app.UseCors(CORS_POLICY);
 
 app.UseAuthorization();
 
-// Enable middleware to serve generated Swagger as a JSON endpoint.
-app.UseSwagger();
+throw new Exception("Cannot move further.");
 
-// Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
-// specifying the Swagger JSON endpoint.
-app.UseSwaggerUI(c =>
+if (app.Environment.IsDevelopment())
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-});
+    // Enable middleware to serve generated Swagger as a JSON endpoint.
+    app.UseSwagger();
+
+    // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
+    // specifying the Swagger JSON endpoint.
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    });
+}
 
 app.UseEndpoints(endpoints =>
 {
