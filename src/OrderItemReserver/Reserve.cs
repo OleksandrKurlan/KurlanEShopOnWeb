@@ -10,32 +10,31 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage.Blob;
 
-namespace OrderItemReserver
+namespace OrderItemReserver;
+
+public static class Reserve
 {
-    public static class Reserve
+    [FunctionName("Reserve")]
+    public static async Task<IActionResult> Run(
+        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+        ILogger log, ExecutionContext executionContext)
     {
-        [FunctionName("Reserve")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
-            ILogger log, ExecutionContext executionContext)
-        {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+        log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+        string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
 
-            var config = new ConfigurationBuilder()
-                            .SetBasePath(executionContext.FunctionAppDirectory)
-                            .AddJsonFile("local.settings.json", true, true)
-                            .AddEnvironmentVariables().Build();
+        var config = new ConfigurationBuilder()
+                        .SetBasePath(executionContext.FunctionAppDirectory)
+                        .AddJsonFile("local.settings.json", true, true)
+                        .AddEnvironmentVariables().Build();
 
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(config["BlobConnectionString"]);
-            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
-            CloudBlobContainer container = blobClient.GetContainerReference("order-items");
-            string fileName = Guid.NewGuid().ToString() + ".json";
-            CloudBlockBlob blob = container.GetBlockBlobReference(fileName);
-            await blob.UploadTextAsync(requestBody);
+        CloudStorageAccount storageAccount = CloudStorageAccount.Parse(config["BlobConnectionString"]);
+        CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+        CloudBlobContainer container = blobClient.GetContainerReference("order-items");
+        string fileName = Guid.NewGuid().ToString() + ".json";
+        CloudBlockBlob blob = container.GetBlockBlobReference(fileName);
+        await blob.UploadTextAsync(requestBody);
 
-            return new OkObjectResult($"Order has been saved to {fileName} file.");
-        }
+        return new OkObjectResult($"Order has been saved to {fileName} file.");
     }
 }
