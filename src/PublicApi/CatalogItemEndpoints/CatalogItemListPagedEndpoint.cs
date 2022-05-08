@@ -60,9 +60,8 @@ public class CatalogItemListPagedEndpoint : IEndpoint<IResult, ListPagedCatalogI
         _logger.LogInformation($"CatalogItemListPagedEndpoint - Info:ItemRepository returned {items.Count} items.");
         _logger.LogWarning($"CatalogItemListPagedEndpoint - Warn:ItemRepository returned {items.Count} items.");
 
-        throw new Exception("Cannot move further");
-
         response.CatalogItems.AddRange(items.Select(_mapper.Map<CatalogItemDto>));
+
         foreach (CatalogItemDto item in response.CatalogItems)
         {
             item.PictureUri = _uriComposer.ComposePicUri(item.PictureUri);

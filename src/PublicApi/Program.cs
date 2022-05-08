@@ -91,26 +91,23 @@ builder.Services.AddMediatR(typeof(CatalogItem).Assembly);
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 builder.Services.AddEndpointsApiExplorer();
-
-if (builder.Environment.IsDevelopment())
+builder.Services.AddSwaggerGen(c =>
 {
-    builder.Services.AddSwaggerGen(c =>
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+    c.EnableAnnotations();
+    c.SchemaFilter<CustomSchemaFilters>();
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-        c.EnableAnnotations();
-        c.SchemaFilter<CustomSchemaFilters>();
-        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-        {
-            Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+        Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
                       Enter 'Bearer' [space] and then your token in the text input below.
                       \r\n\r\nExample: 'Bearer 12345abcdef'",
-            Name = "Authorization",
-            In = ParameterLocation.Header,
-            Type = SecuritySchemeType.ApiKey,
-            Scheme = "Bearer"
-        });
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
 
-        c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
             {
                     {
                         new OpenApiSecurityScheme
@@ -128,8 +125,7 @@ if (builder.Environment.IsDevelopment())
                         new List<string>()
                     }
             });
-    });
-}
+});
 
 var app = builder.Build();
 
@@ -171,20 +167,18 @@ app.UseCors(CORS_POLICY);
 
 app.UseAuthorization();
 
-throw new Exception("Cannot move further.");
-
 if (app.Environment.IsDevelopment())
 {
     // Enable middleware to serve generated Swagger as a JSON endpoint.
     app.UseSwagger();
-
-    // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
-    // specifying the Swagger JSON endpoint.
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-    });
 }
+
+// Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
+// specifying the Swagger JSON endpoint.
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+});
 
 app.UseEndpoints(endpoints =>
 {
