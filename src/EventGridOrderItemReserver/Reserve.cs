@@ -17,7 +17,7 @@ namespace EventGridOrderItemReserver;
 public static class Reserve
 {
     [FunctionName("Reverve")]
-    public static async Task<ObjectResult> Run(
+    public static async Task Run(
         [EventGridTrigger]EventGridEvent eventGridEvent, 
         ILogger log, 
         ExecutionContext executionContext)
@@ -37,7 +37,5 @@ public static class Reserve
         string fileName = Guid.NewGuid().ToString() + ".json";
         CloudBlockBlob blob = container.GetBlockBlobReference(fileName);
         await blob.UploadTextAsync(request);
-
-        return new OkObjectResult($"Order has been saved to {fileName} file.");
     }
 }
