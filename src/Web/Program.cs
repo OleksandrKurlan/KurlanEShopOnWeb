@@ -103,6 +103,14 @@ builder.Services.AddScoped<OrderItemsReserverService>(b =>
         b.GetRequiredService<ILogger<OrderItemsReserverService>>());
 });
 
+builder.Services.AddScoped<EventGridOrderItemsReserverService>(b =>
+{
+    return new EventGridOrderItemsReserverService(
+        builder.Configuration.GetConnectionString("EventGridTopicEndpoint"),
+        builder.Configuration.GetConnectionString("EventGridTopicAccessKey"),
+        b.GetRequiredService<ILogger<EventGridOrderItemsReserverService>>());
+});
+
 var app = builder.Build();
 
 app.Logger.LogInformation("App created...");
