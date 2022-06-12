@@ -44,7 +44,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderItemReserver", "src\Or
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureCosmosDbOrderItemReserver", "src\AzureCosmosDbOrderItemReserver\AzureCosmosDbOrderItemReserver.csproj", "{BB39B070-3AEC-4A20-8EC0-2074AA14D9FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventGridOrderItemReserver", "src\EventGridOrderItemReserver\EventGridOrderItemReserver.csproj", "{0F322948-93E7-4E32-AF28-0A4A9CF6D5AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventGridOrderItemReserver", "src\EventGridOrderItemReserver\EventGridOrderItemReserver.csproj", "{0F322948-93E7-4E32-AF28-0A4A9CF6D5AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBusOrderItemsReserver", "src\ServiceBusOrderItemsReserver\ServiceBusOrderItemsReserver.csproj", "{2054217F-A6E5-49BB-B5B8-42E9F90A2A21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -108,6 +110,10 @@ Global
 		{0F322948-93E7-4E32-AF28-0A4A9CF6D5AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F322948-93E7-4E32-AF28-0A4A9CF6D5AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F322948-93E7-4E32-AF28-0A4A9CF6D5AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2054217F-A6E5-49BB-B5B8-42E9F90A2A21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2054217F-A6E5-49BB-B5B8-42E9F90A2A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2054217F-A6E5-49BB-B5B8-42E9F90A2A21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2054217F-A6E5-49BB-B5B8-42E9F90A2A21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

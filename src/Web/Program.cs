@@ -16,7 +16,6 @@ using Microsoft.eShopWeb.Infrastructure.Identity;
 using Microsoft.eShopWeb.Web;
 using Microsoft.eShopWeb.Web.Configuration;
 using Microsoft.eShopWeb.Web.HealthChecks;
-using Microsoft.eShopWeb.Web.Services;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -82,7 +81,7 @@ builder.Services.Configure<BaseUrlConfiguration>(configSection);
 var baseUrlConfig = configSection.Get<BaseUrlConfiguration>();
 
 // Blazor Admin Required Services for Prerendering
-builder.Services.AddScoped<HttpClient>(s => new HttpClient
+builder.Services.AddScoped(s => new HttpClient
 {
     BaseAddress = new Uri(baseUrlConfig.WebBase)
 });
@@ -96,20 +95,10 @@ builder.Services.AddBlazorServices();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddScoped<OrderItemsReserverService>(b =>
-{
-    return new OrderItemsReserverService(
-        builder.Configuration.GetConnectionString("OrderItemReserverConnection"),
-        b.GetRequiredService<ILogger<OrderItemsReserverService>>());
-});
-
-builder.Services.AddScoped<EventGridOrderItemsReserverService>(b =>
-{
-    return new EventGridOrderItemsReserverService(
-        builder.Configuration.GetConnectionString("EventGridTopicEndpoint"),
-        builder.Configuration.GetConnectionString("EventGridTopicAccessKey"),
-        b.GetRequiredService<ILogger<EventGridOrderItemsReserverService>>());
-});
+builder.Services.AddScoped(b => new ServiceBusOrderItemsReserverService(
+    builder.Configuration.GetConnectionString("ServiceBusConnection"), 
+    builder.Configuration.GetConnectionString("ServiceBusQueueName"), 
+    b.GetRequiredService<ILogger<ServiceBusOrderItemsReserverService>>()));
 
 var app = builder.Build();
 
